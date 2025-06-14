@@ -4,14 +4,13 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('permintaan_transfers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('pasien_id')->constrained('pasiens');
-            $table->foreignId('dari_dokter_id')->constrained('users');
+            $table->foreignId('dari_dokter_id')->constrained('dokters');
             $table->string('dari_tenant_id'); // Merujuk ke ID dari tabel tenants (landlord)
             $table->string('ke_tenant_id'); // Merujuk ke ID dari tabel tenants (landlord)
             $table->text('alasan_rujukan');

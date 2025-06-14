@@ -27,7 +27,7 @@ class Kunjungan extends Model
      */
     public function dokter(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'dokter_id');
+        return $this->belongsTo(Dokter::class);
     }
 
     /**

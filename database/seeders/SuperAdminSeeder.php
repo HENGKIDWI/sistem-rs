@@ -13,17 +13,19 @@ class SuperAdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Buat user baru
-        $user = User::create([
-            'name' => 'Super Admin',
-            'email' => 'superadmin@rumahsakit.test',
-            'password' => bcrypt('password') // Ganti dengan password yang aman
-        ]);
+        // Cari user berdasarkan email, jika tidak ada, buat baru.
+        $user = User::firstOrCreate(
+            ['email' => 'superadmin@rumahsakit.test'], // Kriteria unik untuk mencari
+            [
+                'name' => 'Super Admin',
+                'password' => bcrypt('password') // Data untuk membuat jika tidak ada
+            ]
+        );
 
-        // Cari peran 'super_admin' yang sudah kita buat sebelumnya
-        $superAdminRole = Role::where('name', 'super_admin')->first();
+        // Cari peran 'super_admin'
+        $superAdminRole = Role::findByName('super_admin');
 
-        // Berikan peran tersebut ke user
+        // Berikan peran ke user (assignRole sudah cukup cerdas untuk tidak duplikat)
         if ($superAdminRole) {
             $user->assignRole($superAdminRole);
         }
