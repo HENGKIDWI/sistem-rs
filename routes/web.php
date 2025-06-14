@@ -3,40 +3,37 @@
 use Illuminate\Support\Facades\Route;
 use Spatie\Multitenancy\Http\Middleware\NeedsTenant;
 use Spatie\Multitenancy\Http\Middleware\EnsureValidTenantSession;
-use Spatie\Multitenancy\Contracts\IsTenant;
+use App\Domain\Admin\Http\Controllers\SuperAdminController;
+use App\Domain\Tenant\Http\Controllers\AdminRsController;
+use App\Domain\Tenant\Http\Controllers\DokterController;
+use App\Domain\Tenant\Http\Controllers\PasienController;
+use app\Domain\Landlord\Http\Controllers\LandingPageController;
+use Illuminate\Http\Request; 
 
-// Grup ini memastikan rute di dalamnya hanya cocok untuk domain utama.
+
+/*
+|--------------------------------------------------------------------------
+| Rute Domain Utama (Landlord)
+|--------------------------------------------------------------------------
+*/
+
+// Domain Utama (rumahsakit.test)
 Route::domain(config('app.domain', 'rumahsakit.test'))->group(function () {
-    
-    // Halaman utama, nanti bisa menampilkan daftar rumah sakit.
-    Route::get('/', function () {
-        // Contoh: Ambil semua data RS untuk ditampilkan di landing page.
-        // $rumahSakits = \App\Models\RumahSakit::all();
-        // return view('welcome', ['rumahSakits' => $rumahSakits]);
-        
-        return 'Ini adalah Landing Page Utama. Daftar RS akan muncul di sini.';
-    });
-
+    Route::get('/', [LandingPageController::class, 'index'])->name('landing');
 });
 
-Route::domain('admin.' . config('app.domain', 'rumahsakit.test'))->group(function () {
-    // Rute untuk Super Admin akan diarahkan ke Panel Filament-nya.
-    // Untuk sementara, kita bisa buat rute tes.
-    Route::get('/', function () {
-        return 'Redirecting to Super Admin Panel...';
-    });
+// Domain Super Admin (admin.rumahsakit.test)
+Route::domain('admin.' . config('app.domain', 'rumahsakit.test'))->middleware([
+    'auth', 'role:super_admin'
+])->group(function () {
+    Route::get('/', [SuperAdminController::class, 'dashboard'])->name('superadmin.dashboard');
 });
+
 
 /*
 |--------------------------------------------------------------------------
 | Rute Subdomain Rumah Sakit (Tenant)
 |--------------------------------------------------------------------------
-|
-| Rute-rute di bawah ini akan aktif untuk SEMUA subdomain yang valid
-| (misalnya: rsharapan.rumahsakit.test, rsmitra.rumahsakit.test, dll).
-| Middleware `NeedsTenant` secara otomatis akan mencari dan menetapkan
-| rumah sakit yang aktif berdasarkan subdomain.
-|
 */
 Route::middleware([
     'web',
@@ -44,22 +41,58 @@ Route::middleware([
     EnsureValidTenantSession::class,
 ])->group(function () {
 
-    Route::get('/', function () {
-        // Ambil tenant yang aktif dari container
-        $currentTenant = app(IsTenant::class);
-
-        // Jika tenant ditemukan, tampilkan namanya. Jika tidak, beri pesan fallback.
-        return 'Selamat datang di Portal Pasien: ' . ($currentTenant ? $currentTenant->name : 'Unknown');
+    // Rute untuk Pasien
+    Route::middleware(['auth', 'role:pasien'])->group(function() {
+        Route::get('/', [PasienController::class, 'dashboard'])->name('pasien.dashboard');
     });
 
-    Route::get('/dokter', function() {
-        $currentTenant = app(IsTenant::class);
-        return 'Ini adalah Dashboard untuk Dokter di ' . ($currentTenant ? $currentTenant->name : 'Unknown');
+    // Rute untuk Dokter
+    Route::prefix('dokter')->name('dokter.')->middleware(['auth', 'role:dokter'])->group(function() {
+        Route::get('/', [DokterController::class, 'dashboard'])->name('dashboard');
+        Route::get('/rujukan', [DokterController::class, 'showRujukan'])->name('rujukan.show');
     });
 
-    Route::get('/admin', function() {
-        $currentTenant = app(IsTenant::class);
-        return 'Ini adalah Panel untuk Admin RS ' . ($currentTenant ? $currentTenant->name : 'Unknown');
+    // Rute untuk Admin RS
+    Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin_rs'])->group(function() {
+        Route::get('/', [AdminRsController::class, 'dashboard'])->name('dashboard');
+        Route::get('/kelola-dokter', [AdminRsController::class, 'manageDokter'])->name('dokter.manage');
     });
 
 });
+
+/*
+|--------------------------------------------------------------------------
+| Rute "Hub" Dashboard
+|--------------------------------------------------------------------------
+| Rute ini akan menjadi titik masuk setelah login, yang kemudian akan
+| mengarahkan pengguna ke dashboard yang sesuai dengan perannya.
+*/
+Route::get('/dashboard', function (Request $request) {
+    /** @var \App\Models\User $user */
+    $user = $request->user();
+
+    if ($user->hasRole('super_admin')) {
+        return redirect()->route('superadmin.dashboard');
+    }
+
+    if ($user->hasRole('admin_rs')) {
+        // Pastikan Anda berada di domain tenant yang benar atau tangani logikanya
+        return redirect()->route('admin.dashboard');
+    }
+
+    if ($user->hasRole('dokter')) {
+        // Pastikan Anda berada di domain tenant yang benar atau tangani logikanya
+        return redirect()->route('dokter.dashboard');
+    }
+
+    if ($user->hasRole('pasien')) {
+        // Pastikan Anda berada di domain tenant yang benar atau tangani logikanya
+        return redirect()->route('pasien.dashboard');
+    }
+
+    // Fallback jika user tidak punya peran yang dikenali
+    return redirect('/');
+
+})->middleware(['auth'])->name('dashboard');
+
+require __DIR__.'/auth.php';
