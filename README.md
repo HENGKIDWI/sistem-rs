@@ -70,3 +70,4 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
 - http://rsmitra.rumahsakit.test:8000/
 - http://rumahsakit.test:8000/
 - http://rsharapan.rumahsakit.test:8000/
+- http://admin.rumahsakit.test:8000/
