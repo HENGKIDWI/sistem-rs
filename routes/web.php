@@ -8,7 +8,8 @@ use App\Domain\Tenant\Http\Controllers\AdminRsController;
 use App\Domain\Tenant\Http\Controllers\DokterController;
 use App\Domain\Tenant\Http\Controllers\PasienController;
 use app\Domain\Landlord\Http\Controllers\LandingPageController;
-use Illuminate\Http\Request; 
+use Illuminate\Http\Request;
+use app\Http\Controllers\ProfileController;
 
 
 /*
@@ -23,12 +24,24 @@ Route::domain(config('app.domain', 'rumahsakit.test'))->group(function () {
 });
 
 // Domain Super Admin (admin.rumahsakit.test)
-Route::domain('admin.' . config('app.domain', 'rumahsakit.test'))->middleware([
-    'auth', 'role:super_admin'
-])->group(function () {
-    Route::get('/', [SuperAdminController::class, 'dashboard'])->name('superadmin.dashboard');
-});
+Route::domain('admin.' . config('app.domain', 'rumahsakit.test'))
+    ->middleware(['web', 'auth', 'role:super_admin'])
+    ->group(function () {
+        // Menampilkan dashboard utama (sudah ada)
+        Route::get('/', [SuperAdminController::class, 'dashboard'])->name('superadmin.dashboard');
 
+        // Menyimpan data RS baru (Create)
+        Route::post('/rumah-sakit', [SuperAdminController::class, 'store'])->name('superadmin.rs.store');
+
+        // Menampilkan form edit (Update)
+        Route::get('/rumah-sakit/{id}/edit', [SuperAdminController::class, 'edit'])->name('superadmin.rs.edit');
+
+        // Mengupdate data RS (Update)
+        Route::put('/rumah-sakit/{id}', [SuperAdminController::class, 'update'])->name('superadmin.rs.update');
+
+        // Menghapus data RS (Delete)
+        Route::delete('/rumah-sakit/{id}', [SuperAdminController::class, 'destroy'])->name('superadmin.rs.destroy');
+    });
 
 /*
 |--------------------------------------------------------------------------
@@ -42,18 +55,19 @@ Route::middleware([
 ])->group(function () {
 
     // Rute untuk Pasien
-    Route::middleware(['auth', 'role:pasien'])->group(function() {
+    Route::middleware(['auth', 'role:pasien'])->group(function () {
         Route::get('/', [PasienController::class, 'dashboard'])->name('pasien.dashboard');
+        
     });
 
     // Rute untuk Dokter
-    Route::prefix('dokter')->name('dokter.')->middleware(['auth', 'role:dokter'])->group(function() {
+    Route::prefix('dokter')->name('dokter.')->middleware(['auth', 'role:dokter'])->group(function () {
         Route::get('/', [DokterController::class, 'dashboard'])->name('dashboard');
         Route::get('/rujukan', [DokterController::class, 'showRujukan'])->name('rujukan.show');
     });
 
     // Rute untuk Admin RS
-    Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin_rs'])->group(function() {
+    Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin_rs'])->group(function () {
         Route::get('/', [AdminRsController::class, 'dashboard'])->name('dashboard');
         Route::get('/kelola-dokter', [AdminRsController::class, 'manageDokter'])->name('dokter.manage');
     });
@@ -95,4 +109,11 @@ Route::get('/dashboard', function (Request $request) {
 
 })->middleware(['auth'])->name('dashboard');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
+
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});

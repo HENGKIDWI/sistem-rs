@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 // Hapus atau ganti 'use Illuminate\Database\Eloquent\Model;' dengan baris di bawah
 use Spatie\Multitenancy\Models\Tenant;
 
-class RumahSakit extends Tenant // <-- UBAH BAGIAN INI
+class RumahSakit extends Tenant
 {
     use HasFactory;
+    protected $connection = 'landlord';
+    protected $table = 'tenants';
 
     /**
      * The attributes that are mass assignable.
@@ -18,5 +20,8 @@ class RumahSakit extends Tenant // <-- UBAH BAGIAN INI
     protected $fillable = [
         'name',
         'domain',
+        'logo',
+        'status',
+        'database',
     ];
 }
