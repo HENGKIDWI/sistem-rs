@@ -16,6 +16,8 @@ class Pasien extends Model
         'tanggal_lahir',
         'alamat',
         'nomor_telepon',
+        'ktp_path', // <-- CUKUP TAMBAHKAN NAMA KOLOM BARU DI SINI
+        'receives_promotions',
     ];
 
     public function user(): BelongsTo

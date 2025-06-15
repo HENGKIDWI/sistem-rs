@@ -9,6 +9,7 @@ use App\Domain\Tenant\Http\Controllers\DokterController;
 use App\Domain\Tenant\Http\Controllers\PasienController;
 use app\Domain\Landlord\Http\Controllers\LandingPageController;
 use Illuminate\Http\Request; 
+use App\Domain\Tenant\Http\Controllers\ProfileController;
 
 
 /*
@@ -40,6 +41,11 @@ Route::middleware([
     NeedsTenant::class,
     EnsureValidTenantSession::class,
 ])->group(function () {
+
+    Route::middleware('auth')->group(function () {
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    });
 
     // Rute untuk Pasien
     Route::middleware(['auth', 'role:pasien'])->group(function() {
