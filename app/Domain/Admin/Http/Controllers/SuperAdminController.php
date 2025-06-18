@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Spatie\Multitenancy\Models\Tenant;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Artisan;
 
 class SuperAdminController extends Controller
 {
@@ -59,15 +60,15 @@ class SuperAdminController extends Controller
         $logoPath = $request->hasFile('logo') ? $request->file('logo')->store('public/logos') : null;
         $dbName = 'tenant_' . $validated['domain'];
 
-        // 1. Buat database secara manual terlebih dahulu
+        // 1. Buat database secara manual
         try {
             DB::connection('landlord')->statement("CREATE DATABASE IF NOT EXISTS `$dbName`");
         } catch (\Exception $e) {
             return back()->with('error', 'Gagal membuat database: ' . $e->getMessage())->withInput();
         }
 
-        // 2. Setelah database berhasil dibuat, baru buat record tenant
-        RumahSakit::create([
+        // 2. Buat record tenant di database landlord
+        $tenant = RumahSakit::create([
             'name' => $validated['name'],
             'domain' => $fullDomain,
             'logo' => $logoPath,
@@ -75,7 +76,38 @@ class SuperAdminController extends Controller
             'database' => $dbName,
         ]);
 
-        return redirect()->route('superadmin.dashboard')->with('success', 'Rumah Sakit dan databasenya berhasil dibuat!');
+        // --- LOGIKA MIGRASI BARU DIMULAI DI SINI ---
+        try {
+            // 3. Jadikan tenant baru sebagai tenant aktif untuk proses ini
+            $tenant->makeCurrent();
+            info('Tenant aktif: ' . config('database.connections.tenant.database'));
+
+            // 4. Jalankan migrasi dan seeder pada database tenant yang sudah aktif
+            Artisan::call('migrate', [
+                '--database' => 'tenant',
+                '--force' => true,
+            ]);
+
+            Artisan::call('db:seed', [
+                '--database' => 'tenant',
+                '--class' => 'TenantBaseSeeder',
+                '--force' => true,
+            ]);
+
+
+        } catch (\Exception $e) {
+            // Jika migrasi gagal, kembalikan error
+            return back()->with('error', 'Gagal menjalankan migrasi untuk tenant baru: ' . $e->getMessage())->withInput();
+        } finally {
+            // 5. Pastikan untuk kembali ke konteks landlord setelah selesai
+            if (Tenant::checkCurrent()) {
+                Tenant::forgetCurrent();
+            }
+
+        }
+        // --- LOGIKA MIGRASI SELESAI ---
+
+        return redirect()->route('superadmin.dashboard')->with('success', 'Rumah Sakit berhasil dibuat dan migrasi berhasil dijalankan!');
     }
 
 

@@ -7,9 +7,10 @@ use App\Domain\Admin\Http\Controllers\SuperAdminController;
 use App\Domain\Tenant\Http\Controllers\AdminRsController;
 use App\Domain\Tenant\Http\Controllers\DokterController;
 use App\Domain\Tenant\Http\Controllers\PasienController;
-use app\Domain\Landlord\Http\Controllers\LandingPageController;
+use App\Domain\Landlord\Http\Controllers\LandingPageController;
 use Illuminate\Http\Request;
-use app\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProfileController;
+
 
 
 /*
