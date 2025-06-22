@@ -10,7 +10,7 @@
 
             <!-- Pesan Sukses -->
             @if(session()->has('message'))
-                <div class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg" role="alert">
+                <div class="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg " role="alert">
                     {{ session('message') }}
                 </div>
             @endif
@@ -35,7 +35,8 @@
                             <div class="flex-shrink-0 mt-4 md:mt-0 md:ml-6 text-left md:text-right">
                                 <p class="text-sm font-medium text-gray-800">{{ $appointment->tanggal_kunjungan->format('d M Y') }} - {{ $appointment->jam_kunjungan->format('H:i') }}</p>
                                 <div class="flex items-center space-x-2 mt-2">
-                                    <button wire:click="$dispatch('open-medical-record-modal', { appointmentId: {{ $appointment->id }} })" class="text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
+                                    <button onclick="Livewire.dispatch('open-medical-record-modal', { appointmentId: '{{ $appointment->id }}' })" 
+                                        class="text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                                         Isi Rekam Medis
                                     </button>
                                     @if($appointment->rujukan)
@@ -43,7 +44,7 @@
                                             Sudah Dirujuk
                                         </span>
                                     @else
-                                        <button wire:click="$dispatch('open-create-rujukan-modal', { appointmentId: {{ $appointment->id }} })"
+                                        <button onclick="Livewire.dispatch('open-create-rujukan-modal', { appointmentId: '{{ $appointment->id }}' })"
                                             class="text-sm font-semibold text-white bg-green-600 hover:bg-green-700 py-2 px-4 rounded-lg shadow-md transition-colors duration-300">
                                             Buat Rujukan
                                         </button>

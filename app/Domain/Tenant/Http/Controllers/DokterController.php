@@ -17,24 +17,17 @@ class DokterController extends Controller
     {
         $dokter = Auth::user()->dokter;
 
-        // Mengambil janji temu berdasarkan statusnya, bukan hanya tanggal.
-        // Ini lebih akurat karena dokter mungkin perlu mengisi rekam medis di hari yang sama.
+        // Janji temu yang belum selesai
         $janjiMendatang = Appointment::where('dokter_id', $dokter->id)
-            ->where('tanggal_kunjungan', '>=', now()->toDateString())
-            ->where(function ($query) {
-                $query->where('tanggal_kunjungan', '>', now()->toDateString())
-                      ->orWhere(function ($query) {
-                          $query->where('tanggal_kunjungan', now()->toDateString())
-                                ->where('jam_kunjungan', '>=', now()->toTimeString());
-                      });
-            })
+            ->where('status', '!=', 'selesai')
             ->with(['user', 'rujukan'])
             ->orderBy('tanggal_kunjungan', 'asc')
             ->orderBy('jam_kunjungan', 'asc')
             ->get();
 
+        // Riwayat janji temu yang sudah selesai
         $riwayatJanji = Appointment::where('dokter_id', $dokter->id)
-            ->where('tanggal_kunjungan', '<', now()->toDateString())
+            ->where('status', 'selesai')
             ->with(['user', 'medicalRecord'])
             ->orderBy('tanggal_kunjungan', 'desc')
             ->orderBy('jam_kunjungan', 'desc')

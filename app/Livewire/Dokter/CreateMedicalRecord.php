@@ -39,7 +39,7 @@ class CreateMedicalRecord extends Component
             'diagnosis' => $this->diagnosis,
             'tindakan' => $this->tindakan,
             'resep_obat' => $this->resep_obat,
-            'catatan' => $this->catatan,
+            'catatan_dokter' => $this->catatan,
         ]);
 
         // Tandai appointment sebagai 'selesai'
