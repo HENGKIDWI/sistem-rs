@@ -11,6 +11,7 @@ use Spatie\Multitenancy\Actions\MakeTenantCurrentAction;
 use Spatie\Multitenancy\Actions\MigrateTenantAction;
 use Spatie\Multitenancy\Models\Tenant;
 use Spatie\Multitenancy\TenantFinder\DomainTenantFinder;
+use App\TenantFinder\CustomTenantFinder;
 
 return [
     /*
@@ -20,7 +21,7 @@ return [
      * This class should extend `Spatie\Multitenancy\TenantFinder\TenantFinder`
      *
      */
-    'tenant_finder' => DomainTenantFinder::class,
+    'tenant_finder' => \Spatie\Multitenancy\TenantFinder\DomainTenantFinder::class,
 
     /*
      * These fields are used by tenant:artisan command to match one or more tenant.
@@ -121,4 +122,6 @@ return [
     'not_tenant_aware_jobs' => [
         // ...
     ],
+
+    'tenant_helper_function_name' => 'tenant',
 ];

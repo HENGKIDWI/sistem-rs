@@ -5,56 +5,63 @@ namespace App\Domain\Tenant\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
     /**
-     * Menampilkan form untuk edit profil.
+     * Menampilkan form untuk mengedit profil user.
      */
     public function edit()
     {
-        // Ambil data user yang sedang login
-        $user = Auth::user();
-
-        // Tampilkan view dan kirim data user ke dalamnya
-        return view('domain.tenant.pasien.profile.edit', compact('user'));
+        return view('domain.tenant.pasien.profile.edit', [
+            'user' => Auth::user()
+        ]);
     }
 
     /**
-     * Memperbarui data profil di database.
+     * Memperbarui data profil user di database.
      */
     public function update(Request $request)
     {
-        
-        // Ambil user yang sedang login
-        $user = Auth::user();
+        $user = $request->user();
+        $pasien = $user->pasien;
 
-        // Validasi data yang masuk
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email,' . $user->id],
-            'ktp_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'], // Validasi file
-            'receives_promotions' => ['nullable', 'boolean'], // validasi untuk checkbox
+            'email' => ['required', 'string', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'photo' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
+            'ktp_file' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ]);
 
-        // Update data user
-        $user->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'receives_promotions' => $request->boolean('receives_promotions'),
-        ]);
+        $user->fill($request->only('name', 'email'));
 
-                if ($request->hasFile('ktp_file')) {
-            // Simpan file ke storage dan dapatkan path-nya
-            $path = $request->file('ktp_file')->store('ktp_images', 'public');
-
-            // Simpan path file ke database
-            if ($pasien) {
-                $pasien->update(['ktp_path' => $path]);
-            }
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        // Kembali ke halaman edit dengan pesan sukses
+        // Menangani upload foto profil.
+        if ($request->hasFile('photo')) {
+            // Hapus foto lama jika ada.
+            if ($user->profile_photo_path) {
+                Storage::disk('public')->delete($user->profile_photo_path);
+            }
+            // Simpan foto baru dan dapatkan path-nya.
+            $user->profile_photo_path = $request->file('photo')->store('profile-photos', 'public');
+        }
+
+        $user->save();
+
+        // Menangani upload file KTP.
+        if ($pasien && $request->hasFile('ktp_file')) {
+            if ($pasien->ktp_path) {
+                Storage::disk('public')->delete($pasien->ktp_path);
+            }
+            $pasien->ktp_path = $request->file('ktp_file')->store('ktp_images', 'public');
+            $pasien->save();
+        }
+
         return redirect()->route('profile.edit')->with('status', 'profile-updated');
     }
 }

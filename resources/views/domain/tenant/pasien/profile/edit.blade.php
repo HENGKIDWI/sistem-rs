@@ -1,22 +1,22 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
             {{ __('Edit Profile') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            {{-- Form untuk Edit Data Diri --}}
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            {{-- Bagian Informasi Profil --}}
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
-                    {{-- Ini akan memanggil file yang baru saja kita buat --}}
-                    @include('domain.tenant.pasien.profile.partials.update-profile-information-form')
+                    {{-- Mengaktifkan kembali @include ini --}}
+                    @include('domain.tenant.pasien.profile.partials.update-profile-information-form', ['user' => $user])
                 </div>
             </div>
 
-            {{-- Form untuk Ubah Password --}}
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
+            {{-- Bagian Update Password --}}
+            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
                 <div class="max-w-xl">
                     @include('profile.partials.update-password-form')
                 </div>

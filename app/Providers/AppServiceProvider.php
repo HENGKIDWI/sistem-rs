@@ -11,7 +11,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Dihapus dari sini karena sudah dipindah ke bootstrap/app.php
     }
 
     /**
@@ -21,6 +21,4 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
-
-    
 }

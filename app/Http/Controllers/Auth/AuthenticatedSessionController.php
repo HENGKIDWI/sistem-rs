@@ -31,7 +31,7 @@ class AuthenticatedSessionController extends Controller
         if ($user->hasRole('super_admin')) {
             return redirect()->intended('http://admin.rumahsakit.test:8000'); // Sesuaikan dengan URL super admin
         } elseif ($user->hasRole('admin_rs')) {
-            return redirect()->intended(route('admin.rs.dashboard')); // Ganti dengan nama rute yang benar
+            return redirect()->intended(route('admin.dashboard')); // Perbaikan: gunakan rute yang benar
         } elseif ($user->hasRole('dokter')) {
             return redirect()->intended(route('dokter.dashboard')); // Ganti dengan nama rute yang benar
         }

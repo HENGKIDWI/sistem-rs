@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Models\Pasien; // <-- 1. TAMBAHKAN USE STATEMENT INI
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -21,10 +22,19 @@ class AssignDefaultRole
      */
     public function handle(Registered $event): void
     {
-        // $event->user akan berisi data user yang baru saja mendaftar.
         $user = $event->user;
 
-        // Berikan peran 'pasien' kepada user tersebut.
+        // 2. Berikan peran 'pasien' kepada user tersebut.
         $user->assignRole('pasien');
+
+        // 3. BUAT PROFIL PASIEN YANG TERHUBUNG SECARA OTOMATIS
+        Pasien::create([
+            'user_id' => $user->id,
+            'nama' => $user->name,
+            // Isi data default lainnya jika perlu
+            'nomor_rekam_medis' => 'RM-' . time() . $user->id, // Contoh nomor rekam medis unik
+            'tanggal_lahir' => '1990-01-01', // Anda bisa set default atau null
+            'alamat' => 'Alamat belum diisi', // Anda bisa set default atau null
+        ]);
     }
 }
