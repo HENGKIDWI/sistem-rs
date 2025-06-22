@@ -1,5 +1,8 @@
 <?php
 
+use Illuminate\Support\Facades\Facade;
+use Illuminate\Support\ServiceProvider;
+
 return [
 
     /*
@@ -53,6 +56,8 @@ return [
     */
 
     'url' => env('APP_URL', 'http://localhost'),
+
+    'domain' => env('APP_DOMAIN', 'rumahsakit.test'),
 
     /*
     |--------------------------------------------------------------------------
@@ -122,5 +127,39 @@ return [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Service Providers
+    |--------------------------------------------------------------------------
+    |
+    | Here you may define all of the service providers for your application.
+    | Service providers are used to bootstrap your application and perform any
+    | initial configuration that needs to be done before running the request
+    | for your application. Feel free to add your own providers to this array
+    | to grant expanded functionality to your applications.
+    |
+    */
+
+    'providers' => ServiceProvider::defaultProviders()->merge([
+        /*
+         * Package Service Providers...
+         */
+
+        /*
+         * Application Service Providers...
+         */
+        App\Providers\AppServiceProvider::class,
+        App\Providers\AuthServiceProvider::class,
+        // App\Providers\BroadcastServiceProvider::class,
+        App\Providers\EventServiceProvider::class,
+        App\Providers\RouteServiceProvider::class,
+        Spatie\Multitenancy\MultitenancyServiceProvider::class,
+    ])->toArray(),
+
+    'aliases' => Facade::defaultAliases()->merge([
+        // 'Example' => App\Facades\Example::class,
+        'Tenant' => Spatie\Multitenancy\Facades\Tenant::class,
+    ])->toArray(),
 
 ];
