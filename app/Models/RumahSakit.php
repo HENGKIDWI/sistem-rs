@@ -19,13 +19,11 @@ class RumahSakit extends Tenant implements IsTenant
     protected $fillable = [
         'name',
         'domain',
-        'database',
         'deskripsi',
         'alamat',
         'telepon',
         'jam_operasional',
-        'logo_path',
-        'website',
+        'logo_url',
     ];
 
     // --- INI BAGIAN PENTING YANG PERLU DITAMBAHKAN ---

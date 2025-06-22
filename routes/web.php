@@ -39,6 +39,10 @@ Route::domain('admin.' . config('app.domain', 'rumahsakit.test'))->middleware([
     'auth', 'role:super_admin'
 ])->group(function () {
     Route::get('/', [SuperAdminController::class, 'dashboard'])->name('superadmin.dashboard');
+    Route::post('/tenants', [SuperAdminController::class, 'store'])->name('superadmin.tenants.store');
+    Route::get('/tenants/{rumahSakit}/edit', [SuperAdminController::class, 'edit'])->name('superadmin.tenants.edit');
+    Route::put('/tenants/{rumahSakit}', [SuperAdminController::class, 'update'])->name('superadmin.tenants.update');
+    Route::delete('/tenants/{rumahSakit}', [SuperAdminController::class, 'destroy'])->name('superadmin.tenants.destroy');
 });
 
 /*

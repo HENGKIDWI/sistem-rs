@@ -33,7 +33,7 @@ class LandingPageRsController extends Controller
         // Pastikan model Dokter, Pengumuman, dll., sudah menggunakan trait `UsesTenantConnection`.
 
         // Mengambil dokter dari tenant saat ini
-        $dokters = Dokter::latest()->get();
+        $dokters = $tenant->dokters()->latest()->get();
 
         // Mengambil pengumuman dari tenant saat ini, diurutkan dari yang terbaru
         $announcements = Pengumuman::orderBy('tanggal', 'desc')->get();

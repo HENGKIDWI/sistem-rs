@@ -38,7 +38,7 @@
             <div class="flex flex-col sm:flex-row justify-center items-center gap-4 mb-4">
                 {{-- Bagian Logo --}}
                 @if(isset($tenant->logo_url) && $tenant->logo_url)
-                    <img src="{{ $tenant->logo_url }}" alt="Logo {{ $tenant->name }}" class="h-20 w-20 object-contain">
+                    <img src="{{ Storage::url($tenant->logo_url) }}" alt="Logo {{ $tenant->name }}" class="h-20 w-20 object-contain">
                 @endif
                 <h1 class="text-4xl md:text-5xl font-extrabold text-blue-600 dark:text-blue-400">{{ $tenant->name }}</h1>
             </div>
