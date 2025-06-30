@@ -93,6 +93,12 @@ class PasienController extends Controller
             // Kirim notifikasi ke pasien
             $user->notify(new AppointmentCreated($appointment));
 
+            // Kirim notifikasi ke dokter
+            $dokterUser = $appointment->dokter->user;
+            if ($dokterUser) {
+                $dokterUser->notify(new AppointmentCreated($appointment));
+            }
+
             return redirect()->route('pasien.dashboard')->with('success', 'Janji temu Anda telah berhasil dibuat.');
 
         } catch (ValidationException $e) {

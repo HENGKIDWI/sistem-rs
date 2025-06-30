@@ -40,7 +40,17 @@ class CreateRujukan extends Component
 
     public function store()
     {
-        $this->validate();
+        $this->validate([
+            'rumahSakitTujuanId' => 'required|different:currentTenant',
+            'alasan_rujukan' => 'required',
+        ], [
+            'rumahSakitTujuanId.different' => 'Rumah Sakit tujuan tidak boleh sama dengan rumah sakit asal.',
+        ]);
+
+        if ($this->rumahSakitTujuanId == app('currentTenant')->id) {
+            session()->flash('error', 'Rumah Sakit tujuan tidak boleh sama dengan rumah sakit asal.');
+            return;
+        }
 
         $dokter = Auth::user()->dokter;
         if (!$dokter) {

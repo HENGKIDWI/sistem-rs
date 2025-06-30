@@ -23,7 +23,12 @@ class FasilitasResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Hidden::make('tenant_id')
+                    ->default(fn () => app('currentTenant')->id)
+                    ->required(),
+                Forms\Components\TextInput::make('nama')
+                    ->label('Nama Fasilitas')
+                    ->required(),
             ]);
     }
 
@@ -31,7 +36,7 @@ class FasilitasResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('nama')->label('Nama Fasilitas'),
             ])
             ->filters([
                 //
@@ -60,5 +65,21 @@ class FasilitasResource extends Resource
             'create' => Pages\CreateFasilitas::route('/create'),
             'edit' => Pages\EditFasilitas::route('/{record}/edit'),
         ];
+    }
+
+    public static function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['tenant_id'] = app('currentTenant')->id;
+        return $data;
+    }
+
+    public static function getModelLabel(): string
+    {
+        return 'Fasilitas';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Fasilitas';
     }
 }

@@ -19,11 +19,16 @@ class PengumumanResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-megaphone';
 
+    protected static ?string $navigationLabel = 'Pengumuman';
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Hidden::make('tenant_id')->default(fn () => app('currentTenant')->id ?? null),
+                Forms\Components\TextInput::make('judul')->label('Judul')->required(),
+                Forms\Components\Textarea::make('isi')->label('Isi')->required(),
+                Forms\Components\DatePicker::make('tanggal')->label('Tanggal')->required(),
             ]);
     }
 
@@ -31,7 +36,9 @@ class PengumumanResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('judul')->label('Judul')->searchable(),
+                Tables\Columns\TextColumn::make('isi')->label('Isi')->limit(50),
+                Tables\Columns\TextColumn::make('tanggal')->label('Tanggal')->date(),
             ])
             ->filters([
                 //
@@ -60,5 +67,26 @@ class PengumumanResource extends Resource
             'create' => Pages\CreatePengumuman::route('/create'),
             'edit' => Pages\EditPengumuman::route('/{record}/edit'),
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Manajemen Pengumuman';
+    }
+
+    public static function getModelLabel(): string
+    {
+        return 'Pengumuman';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Pengumuman';
+    }
+
+    public static function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['tenant_id'] = 2; // Hardcode ke RS Harapan Kita, ganti sesuai kebutuhan
+        return $data;
     }
 }

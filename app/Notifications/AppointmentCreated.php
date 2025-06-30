@@ -7,6 +7,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 
 class AppointmentCreated extends Notification
 {
@@ -29,7 +30,7 @@ class AppointmentCreated extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['database']; // Kita akan simpan notifikasi di database
+        return ['database', 'broadcast']; // Tambahkan broadcast agar real-time
     }
 
     /**
@@ -44,5 +45,17 @@ class AppointmentCreated extends Notification
             'message' => 'Janji temu Anda dengan Dr. ' . $this->appointment->dokter->nama_lengkap . ' pada tanggal ' . $this->appointment->tanggal_kunjungan->format('d M Y') . ' telah berhasil dibuat.',
             'url' => route('pasien.dashboard'), // Arahkan ke dashboard pasien
         ];
+    }
+
+    /**
+     * Get the broadcastable representation of the notification.
+     */
+    public function toBroadcast(object $notifiable): BroadcastMessage
+    {
+        return new BroadcastMessage([
+            'title' => 'Janji Temu Dibuat',
+            'message' => 'Janji temu Anda dengan Dr. ' . $this->appointment->dokter->nama_lengkap . ' pada tanggal ' . $this->appointment->tanggal_kunjungan->format('d M Y') . ' telah berhasil dibuat.',
+            'url' => route('pasien.dashboard'),
+        ]);
     }
 }

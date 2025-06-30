@@ -31,18 +31,18 @@ class AppointmentResource extends Resource
     {
         return $table
             ->columns([
-                //
-            ])
-            ->filters([
-                //
+                Tables\Columns\TextColumn::make('id')->label('No'),
+                Tables\Columns\TextColumn::make('user.name')->label('Pasien'),
+                Tables\Columns\TextColumn::make('dokter.nama_lengkap')->label('Dokter'),
+                Tables\Columns\TextColumn::make('tanggal_kunjungan')->label('Tanggal')->date('d-m-Y'),
+                Tables\Columns\TextColumn::make('jam_kunjungan')->label('Jam')->time('H:i'),
+                Tables\Columns\TextColumn::make('status')->label('Status'),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tidak ada aksi edit/delete
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tidak ada aksi bulk
             ]);
     }
 
@@ -57,8 +57,22 @@ class AppointmentResource extends Resource
     {
         return [
             'index' => Pages\ListAppointments::route('/'),
-            'create' => Pages\CreateAppointment::route('/create'),
-            'edit' => Pages\EditAppointment::route('/{record}/edit'),
+            // Hapus route create dan edit
         ];
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return 'Manajemen Janji Temu';
+    }
+
+    public static function getModelLabel(): string
+    {
+        return 'Janji Temu';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Janji Temu';
     }
 }

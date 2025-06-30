@@ -61,4 +61,9 @@ class MedicalRecordResource extends Resource
             'edit' => Pages\EditMedicalRecord::route('/{record}/edit'),
         ];
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
+    }
 }

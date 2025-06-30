@@ -61,4 +61,9 @@ class RumahSakitResource extends Resource
             'edit' => Pages\EditRumahSakit::route('/{record}/edit'),
         ];
     }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return auth()->user()?->hasRole('super_admin');
+    }
 }

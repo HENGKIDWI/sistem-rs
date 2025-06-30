@@ -37,12 +37,10 @@ class AntrianResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                // Tidak ada aksi edit
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tidak ada aksi delete
             ]);
     }
 
@@ -55,10 +53,11 @@ class AntrianResource extends Resource
 
     public static function getPages(): array
     {
-        return [
-            'index' => Pages\ListAntrians::route('/'),
-            'create' => Pages\CreateAntrian::route('/create'),
-            'edit' => Pages\EditAntrian::route('/{record}/edit'),
-        ];
+        return [];
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return false;
     }
 }

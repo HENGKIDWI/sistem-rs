@@ -31,7 +31,11 @@ class PasienResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('nama')->label('Nama')->searchable(),
+                Tables\Columns\TextColumn::make('nik')->label('NIK')->searchable(),
+                Tables\Columns\TextColumn::make('nomor_rekam_medis')->label('No. RM')->searchable(),
+                Tables\Columns\TextColumn::make('tanggal_lahir')->label('Tanggal Lahir')->date(),
+                Tables\Columns\TextColumn::make('jenis_kelamin')->label('Jenis Kelamin'),
             ])
             ->filters([
                 //
@@ -60,5 +64,15 @@ class PasienResource extends Resource
             'create' => Pages\CreatePasien::route('/create'),
             'edit' => Pages\EditPasien::route('/{record}/edit'),
         ];
+    }
+
+    public static function getModelLabel(): string
+    {
+        return 'Pasien';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Pasien';
     }
 }

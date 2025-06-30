@@ -37,4 +37,13 @@ class Fasilitas extends Model
     {
         return $this->belongsTo(RumahSakit::class, 'tenant_id');
     }
+
+    protected static function booted()
+    {
+        static::creating(function ($fasilitas) {
+            if (empty($fasilitas->tenant_id) && app()->bound('currentTenant')) {
+                $fasilitas->tenant_id = app('currentTenant')->id;
+            }
+        });
+    }
 }

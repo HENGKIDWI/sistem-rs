@@ -23,7 +23,17 @@ class GaleriFotoResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\Hidden::make('tenant_id')
+                    ->default(fn () => app('currentTenant')->id)
+                    ->required(),
+                Forms\Components\TextInput::make('judul')
+                    ->label('Judul')
+                    ->required(),
+                Forms\Components\FileUpload::make('foto_path')
+                    ->label('Foto')
+                    ->image()
+                    ->directory('galeri-foto')
+                    ->required(),
             ]);
     }
 
@@ -31,7 +41,8 @@ class GaleriFotoResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('judul')->label('Judul'),
+                Tables\Columns\ImageColumn::make('foto_path')->label('Foto'),
             ])
             ->filters([
                 //
@@ -60,5 +71,15 @@ class GaleriFotoResource extends Resource
             'create' => Pages\CreateGaleriFoto::route('/create'),
             'edit' => Pages\EditGaleriFoto::route('/{record}/edit'),
         ];
+    }
+
+    public static function getModelLabel(): string
+    {
+        return 'Galeri Foto';
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return 'Galeri Foto';
     }
 }
