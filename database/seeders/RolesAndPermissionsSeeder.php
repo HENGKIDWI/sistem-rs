@@ -15,6 +15,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // Gunakan updateOrCreate untuk Permissions
         $permissions = [
             'view-admin-dashboard',
+            'view-patient-dashboard',
             'kelola_rs',
             'kelola_dokter',
             'lihat_rekam_medis',
@@ -37,6 +38,6 @@ class RolesAndPermissionsSeeder extends Seeder
         $superAdminRole->syncPermissions(Permission::all());
         $adminRsRole->syncPermissions(['view-admin-dashboard', 'kelola_dokter', 'kelola_pasien', 'kelola_antrian']);
         $dokterRole->syncPermissions(['lihat_rekam_medis', 'buat_rujukan']);
-        $pasienRole->syncPermissions(['lihat_rekam_medis']);
+        $pasienRole->syncPermissions(['lihat_rekam_medis', 'view-patient-dashboard']);
     }
 }

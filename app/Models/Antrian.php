@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Antrian extends Model
 {
-    protected $table = 'antrians'; // atau 'antrian' sesuai nama tabel
+    protected $table = 'kunjungans';
     protected $guarded = [];
 
     public function dokter()
