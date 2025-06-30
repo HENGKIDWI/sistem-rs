@@ -23,7 +23,12 @@ class RumahSakitResource extends Resource
     {
         return $form
             ->schema([
-                //
+                Forms\Components\TextInput::make('alamat')
+                    ->label('Alamat')
+                    ->required(),
+                Forms\Components\TextInput::make('telepon')
+                    ->label('Telepon')
+                    ->required(),
             ]);
     }
 

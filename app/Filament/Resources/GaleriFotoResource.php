@@ -42,7 +42,7 @@ class GaleriFotoResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('judul')->label('Judul'),
-                Tables\Columns\ImageColumn::make('foto_path')->label('Foto'),
+                Tables\Columns\ImageColumn::make('foto_path')->label('Foto')->disk('public'),
             ])
             ->filters([
                 //

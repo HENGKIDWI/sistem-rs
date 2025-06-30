@@ -132,4 +132,14 @@ Route::get('/home', function (Request $request) {
 
 })->middleware(['auth'])->name('dashboard');
 
+Route::middleware(['auth', 'role:super_admin'])->prefix('super-admin')->group(function () {
+    Route::get('rumah-sakit', [\App\Http\Controllers\SuperAdminRumahSakitController::class, 'index'])->name('superadmin.rumahsakit.index');
+    Route::get('rumah-sakit/{id}/edit', [\App\Http\Controllers\SuperAdminRumahSakitController::class, 'edit'])->name('superadmin.rumahsakit.edit');
+    Route::post('rumah-sakit/{id}/edit', [\App\Http\Controllers\SuperAdminRumahSakitController::class, 'update'])->name('superadmin.rumahsakit.update');
+    Route::get('rumah-sakit/create', [\App\Http\Controllers\SuperAdminRumahSakitController::class, 'create'])->name('superadmin.rumahsakit.create');
+    Route::post('rumah-sakit', [\App\Http\Controllers\SuperAdminRumahSakitController::class, 'store'])->name('superadmin.rumahsakit.store');
+    Route::get('dashboard', [\App\Http\Controllers\SuperAdminDashboardController::class, 'index'])->name('superadmin.dashboard');
+    Route::delete('rumah-sakit/{id}', [\App\Http\Controllers\SuperAdminRumahSakitController::class, 'destroy'])->name('superadmin.rumahsakit.destroy');
+});
+
 require __DIR__.'/auth.php';

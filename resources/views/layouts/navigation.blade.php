@@ -12,39 +12,48 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    @can('view-admin-dashboard')
-                        <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
-                            {{ __('Dashboard') }}
+                    @if(auth()->user()->hasRole('super_admin'))
+                        <x-nav-link :href="route('superadmin.dashboard')" :active="request()->routeIs('superadmin.dashboard')">
+                            Dashboard Super Admin
                         </x-nav-link>
-                        <x-nav-link :href="route('admin.dokter.index')" :active="request()->routeIs('admin.dokter.index')">
-                            {{ __('Manajemen Dokter') }}
+                        <x-nav-link :href="route('superadmin.rumahsakit.index')" :active="request()->is('super-admin/rumah-sakit')">
+                            Manajemen Rumah Sakit
                         </x-nav-link>
-                        <x-nav-link :href="route('admin.pengumuman.index')" :active="request()->routeIs('admin.pengumuman.index')">
-                            {{ __('Manajemen Pengumuman') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
-                            {{ __('Manajemen Pengguna') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.appointments.index')" :active="request()->routeIs('admin.appointments.index')">
-                            {{ __('Manajemen Janji Temu') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('admin.rujukan.incoming')" :active="request()->routeIs('admin.rujukan.incoming')">
-                            {{ __('Rujukan Masuk') }}
-                        </x-nav-link>
-                    @endcan
-                    @can('view-doctor-dashboard')
-                        <x-nav-link :href="route('dokter.dashboard')" :active="request()->routeIs('dokter.dashboard')">
-                            {{ __('Dashboard Dokter') }}
-                        </x-nav-link>
-                    @endcan
-                    @can('view-patient-dashboard')
-                         <x-nav-link :href="route('pasien.dashboard')" :active="request()->routeIs('pasien.dashboard')">
-                            {{ __('Dashboard Pasien') }}
-                        </x-nav-link>
-                        <x-nav-link :href="route('pasien.rujukan')" :active="request()->routeIs('pasien.rujukan')">
-                            {{ __('Rujukan Saya') }}
-                        </x-nav-link>
-                    @endcan
+                    @else
+                        @can('view-admin-dashboard')
+                            <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
+                                {{ __('Dashboard') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.dokter.index')" :active="request()->routeIs('admin.dokter.index')">
+                                {{ __('Manajemen Dokter') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.pengumuman.index')" :active="request()->routeIs('admin.pengumuman.index')">
+                                {{ __('Manajemen Pengumuman') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
+                                {{ __('Manajemen Pengguna') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.appointments.index')" :active="request()->routeIs('admin.appointments.index')">
+                                {{ __('Manajemen Janji Temu') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('admin.rujukan.incoming')" :active="request()->routeIs('admin.rujukan.incoming')">
+                                {{ __('Rujukan Masuk') }}
+                            </x-nav-link>
+                        @endcan
+                        @can('view-doctor-dashboard')
+                            <x-nav-link :href="route('dokter.dashboard')" :active="request()->routeIs('dokter.dashboard')">
+                                {{ __('Dashboard Dokter') }}
+                            </x-nav-link>
+                        @endcan
+                        @can('view-patient-dashboard')
+                             <x-nav-link :href="route('pasien.dashboard')" :active="request()->routeIs('pasien.dashboard')">
+                                {{ __('Dashboard Pasien') }}
+                            </x-nav-link>
+                            <x-nav-link :href="route('pasien.rujukan')" :active="request()->routeIs('pasien.rujukan')">
+                                {{ __('Rujukan Saya') }}
+                            </x-nav-link>
+                        @endcan
+                    @endif
                 </div>
             </div>
 

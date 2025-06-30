@@ -38,6 +38,14 @@ class DokterResource extends Resource
                     ->image()
                     ->directory('foto-dokter')
                     ->required(false),
+                Forms\Components\TextInput::make('email')
+                    ->label('Email')
+                    ->email()
+                    ->required(),
+                Forms\Components\TextInput::make('password')
+                    ->label('Password')
+                    ->password()
+                    ->required(),
             ]);
     }
 
@@ -86,15 +94,15 @@ class DokterResource extends Resource
 
     public static function mutateFormDataBeforeCreate(array $data): array
     {
-        $email = strtolower(str_replace(' ', '', $data['nama_lengkap'])) . '@rs.test';
         $user = \App\Models\User::create([
             'name' => $data['nama_lengkap'],
-            'email' => $email,
-            'password' => bcrypt('password'),
+            'email' => $data['email'],
+            'password' => bcrypt($data['password']),
         ]);
         $user->assignRole('dokter');
         $data['user_id'] = $user->id;
         $data['tenant_id'] = app('currentTenant')->id ?? null;
+        unset($data['email'], $data['password']);
         return $data;
     }
 

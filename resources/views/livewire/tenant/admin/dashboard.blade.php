@@ -2,7 +2,11 @@
     <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
         <div class="max-w-xl">
             <h2 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                Selamat Datang, Admin {{ app('currentTenant')->name }}!
+                @if(app()->bound('currentTenant') && app('currentTenant'))
+                    Selamat Datang, Admin {{ app('currentTenant')->name }}!
+                @else
+                    Selamat Datang, Admin!
+                @endif
             </h2>
             <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
                 Pilih salah satu menu di bawah untuk mulai mengelola sistem.
